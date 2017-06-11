@@ -1,6 +1,8 @@
 from lxml import html
 import requests
 
+from listing import Listing
+
 config = {
     'max_price': "2200",
     'address': 'M5S+1A1',
@@ -8,12 +10,14 @@ config = {
 }
 post_name_xpth_prefix = '//*[@id="MainContainer"]/div[4]/div[3]/div/div['
 post_name_xpth_suffix = ']/div/div[2]/div/div[2]/a'
-page_number = 0
+page_number = 1
 last_page = None
+
+base_url = 'http://www.kijiji.ca'
 
 while (True):
 
-    page_text = 'page-' + str(page_number) + "/" if page_number != 0 else ""
+    page_text = 'page-' + str(page_number) + "/" if page_number != 1 else ""
 
     URL = "http://www.kijiji.ca/b-2-bedroom-apartments-condos/city-of-toronto/" + page_text + \
           "c214l1700273r5.0?price=__" + config['max_price'] + "&address=" + config['address'] + "&ll=" + \
@@ -33,13 +37,13 @@ while (True):
         x_pth = post_name_xpth_prefix + str(i) + post_name_xpth_suffix
         name = tree.xpath(x_pth)
 
-        # Do checks on the posting and do whatever we need with it if it works
-        
-
         # If this element does not exist, it will return an empty array
         if len(name) == 0:
             continue
+
         # Print the postname
+        lst = Listing(base_url + name[0].attrib['href'])
         print(name[0].text.strip())
+        print("     " + str(lst.get_cost()))
 
     page_number += 1
