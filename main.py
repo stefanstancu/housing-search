@@ -45,5 +45,6 @@ while (True):
         lst = Listing(base_url + name[0].attrib['href'])
         print(name[0].text.strip())
         print("     " + str(lst.get_cost()))
+        print("     " + str(lst.get_address()))
 
     page_number += 1

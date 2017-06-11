@@ -32,3 +32,19 @@ def get_cost_by_xpaths(root_elem, cost_xpaths):
             return cost_elem
 
     raise ValueError
+
+
+def get_address_by_xpaths(root_elem, address_xpaths):
+    """
+        Tries all the xpaths for the possible page compositions
+    Returns:
+        HTMLElement: The html address element
+    Raises:
+        ValueError: If there is no value available
+    """
+    for xpath in address_xpaths:
+        address_elem = root_elem.xpath(xpath)
+        if len(address_elem) != 0:
+            return address_elem
+
+    raise ValueError
