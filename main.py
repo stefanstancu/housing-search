@@ -8,6 +8,7 @@ config = {
     'address': 'M5S+1A1',
     'long_lat': '43.660917,-79.396091'
 }
+u_of_t_address = "40 St George St, Toronto, ON M5S 2E4"
 post_name_xpth_prefix = '//*[@id="MainContainer"]/div[4]/div[3]/div/div['
 post_name_xpth_suffix = ']/div/div[2]/div/div[2]/a'
 page_number = 1
@@ -46,5 +47,6 @@ while (True):
         print(name[0].text.strip())
         print("     " + str(lst.get_cost()))
         print("     " + str(lst.get_address()))
+        print("     " + str(lst.get_commute_time(u_of_t_address)) + ' min')
 
     page_number += 1

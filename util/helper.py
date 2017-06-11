@@ -4,14 +4,14 @@
 import re
 
 
-def clean_cost(dirty_string):
+def string_to_float(dirty_string):
     """
         Cleans the cost string from the website
     Args:
         dirty_string: (string)
 
     Returns:
-        float: the cost as a float
+        float:
 
     """
     non_decimal = re.compile(r'[^\d.]+')

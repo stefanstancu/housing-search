@@ -5,6 +5,7 @@ from lxml import html
 import requests
 import util.helper as util
 import sys
+import util.gmaps as gmaps
 
 cost_xpaths = [
     '//*[@id="itemdetails"]/div[2]/table/tr[2]/td/div/span/strong',
@@ -16,12 +17,13 @@ address_xpaths = [
     '//*[@id="itemdetails"]/table/tr[3]/td'
 ]
 
+
 class Listing:
     def __init__(self, url):
-        # Get the listing
-        self.url = url
         self.page = requests.get(url)
         self.tree = html.fromstring(self.page.content)
+        self.url = url
+
         self.cost = 0.0
         self.address = "Default"
 
@@ -33,7 +35,7 @@ class Listing:
         """
         try:
             cost = util.get_cost_by_xpaths(self.tree, cost_xpaths)
-            self.cost = util.clean_cost(cost[0].text)
+            self.cost = util.string_to_float(cost[0].text)
 
         except ValueError:
             print('ERROR: Could not get cost value from the site')
@@ -57,9 +59,11 @@ class Listing:
 
         return self.address
 
-    def get_commute_time(self):
+    def get_commute_time(self, dest_address):
         """
             Uses Google Maps API to compute the travel time using public transit
+        Args:
+            dest_address: (string) raw destination address
         Returns:
             Int: The time in minutes of the commute
 
@@ -68,3 +72,8 @@ class Listing:
         # If there is no address on the object, run get_address
         if self.address == "Default":
             self.get_address()
+
+        gmap = gmaps.Gmap()
+        self.location = gmap.directions(self.address, dest_address)
+        time_str = self.location[0]['legs'][0]['duration']['text']
+        return util.string_to_float(time_str)
