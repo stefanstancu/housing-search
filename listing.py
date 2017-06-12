@@ -94,8 +94,8 @@ class Listing:
 
         gmap = gmaps.Gmap()
         location = gmap.directions(self.get_address(), dest_address)
-        time_str = location[0]['legs'][0]['duration']['text']
-        return util.string_to_float(time_str)
+        time_sec = location[0]['legs'][0]['duration']['value']
+        return time_sec/60
 
     def get_viability(self, dest_address):
         """

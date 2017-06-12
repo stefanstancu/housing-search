@@ -3,6 +3,7 @@ import requests
 
 from listing import Listing
 from util.database import Database
+from util.gmail import Gmail
 
 config = {
     'max_price': "2200",
@@ -18,6 +19,7 @@ last_page = None
 base_url = 'http://www.kijiji.ca'
 
 db = Database()
+mail = Gmail()
 
 while (True):
     page_number = 1
@@ -53,6 +55,8 @@ while (True):
         print("     " + str(lst.get_cost()))
         if not db.listing_exists(lst):
             db.save_listing(lst, u_of_t_address)
+            if lst.get_viability(u_of_t_address) <= 150:
+                mail.notify(lst, ["stefan.stancu15@gmail.com"], u_of_t_address)
             print('** New listing saved **')
         else:
             print('already saved')
