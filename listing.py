@@ -7,6 +7,8 @@ import util.helper as util
 import sys
 import util.gmaps as gmaps
 
+from util.database import DBListing
+
 cost_xpaths = [
     '//*[@id="itemdetails"]/div[2]/table/tr[2]/td/div/span/strong',
     '//*[@id="itemdetails"]/table/tr[2]/td/div/span/strong'
@@ -17,6 +19,8 @@ address_xpaths = [
     '//*[@id="itemdetails"]/table/tr[3]/td'
 ]
 
+title_xpath = '//*[@id="MainContainer"]/div[4]/div[3]/span/h1'
+
 
 class Listing:
     def __init__(self, url):
@@ -24,8 +28,7 @@ class Listing:
         self.tree = html.fromstring(self.page.content)
         self.url = url
 
-        self.cost = 0.0
-        self.address = "Default"
+        self.db_url = util.get_db_url('credentials/db_credentials.json')
 
     def get_cost(self):
         """
@@ -34,12 +37,15 @@ class Listing:
             (int) the listing cost
         """
         try:
-            cost = util.get_cost_by_xpaths(self.tree, cost_xpaths)
-            self.cost = util.string_to_float(cost[0].text)
+            self.cost
+        except AttributeError:
+            try:
+                cost = util.get_cost_by_xpaths(self.tree, cost_xpaths)
+                self.cost = util.string_to_float(cost[0].text)
 
-        except ValueError:
-            print('ERROR: Could not get cost value from the site')
-            sys.exit(0)
+            except ValueError:
+                print('ERROR: Could not get cost value from the site')
+                sys.exit(0)
 
         return self.cost
 
@@ -51,13 +57,30 @@ class Listing:
 
         """
         try:
-            address_elem = util.get_address_by_xpaths(self.tree, address_xpaths)
-            self.address = address_elem[0].text
-        except:
-            print('ERROR: Could not get address value from the site')
-            sys.exit(0)
+            self.address
+        except AttributeError:
+            try:
+                address_elem = util.get_address_by_xpaths(self.tree, address_xpaths)
+                self.address = address_elem[0].text
+            except:
+                print('ERROR: Could not get address value from the site')
+                sys.exit(0)
 
         return self.address
+
+    def get_title(self):
+        """
+            Gets the post title from the HTML if it does not yet exist. Also sets the property on the object.
+        Returns:
+            String: The name of the post
+
+        """
+        try:
+            self.title
+        except AttributeError:
+            self.title = self.tree.xpath(title_xpath)[0].text
+
+        return self.title
 
     def get_commute_time(self, dest_address):
         """
@@ -65,15 +88,24 @@ class Listing:
         Args:
             dest_address: (string) raw destination address
         Returns:
-            Int: The time in minutes of the commute
+            (float): The time in minutes of the commute
 
         """
 
-        # If there is no address on the object, run get_address
-        if self.address == "Default":
-            self.get_address()
-
         gmap = gmaps.Gmap()
-        self.location = gmap.directions(self.address, dest_address)
-        time_str = self.location[0]['legs'][0]['duration']['text']
+        location = gmap.directions(self.get_address(), dest_address)
+        time_str = location[0]['legs'][0]['duration']['text']
         return util.string_to_float(time_str)
+
+    def get_viability(self, dest_address):
+        """
+            Calculates the viability as a score
+        Args:
+            dest_address: for the get_commute_time method
+
+        Returns:
+            (float): viability score
+
+        """
+
+        return self.get_cost() / 100 * self.get_commute_time(dest_address)

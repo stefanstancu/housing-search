@@ -15,7 +15,7 @@ travel_params = {
 class Gmap:
     def __init__(self):
         # Load API Key
-        api_dict = json.load(open('api_keys.json'))
+        api_dict = json.load(open('credentials/api_keys.json'))
         self.gmaps_api_key = api_dict['gmaps']
         self.gmap = googlemaps.Client(key=self.gmaps_api_key)
 

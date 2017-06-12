@@ -2,6 +2,7 @@
     Helper functions are all placed here
 """
 import re
+import json
 
 
 def string_to_float(dirty_string):
@@ -48,3 +49,17 @@ def get_address_by_xpaths(root_elem, address_xpaths):
             return address_elem
 
     raise ValueError
+
+
+def get_db_url(path):
+    """
+        Load the url from a json file, contains credentials
+    Args:
+        path: (string) the path to the json file
+
+    Returns:
+        (string): the database url
+
+    """
+
+    return json.load(open(path))['db_url']

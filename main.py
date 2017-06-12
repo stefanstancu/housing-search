@@ -2,6 +2,7 @@ from lxml import html
 import requests
 
 from listing import Listing
+from util.database import Database
 
 config = {
     'max_price': "2200",
@@ -15,6 +16,8 @@ page_number = 1
 last_page = None
 
 base_url = 'http://www.kijiji.ca'
+
+db = Database()
 
 while (True):
 
@@ -42,11 +45,14 @@ while (True):
         if len(name) == 0:
             continue
 
-        # Print the postname
         lst = Listing(base_url + name[0].attrib['href'])
-        print(name[0].text.strip())
+
+        print(lst.get_title())
         print("     " + str(lst.get_cost()))
-        print("     " + str(lst.get_address()))
-        print("     " + str(lst.get_commute_time(u_of_t_address)) + ' min')
+        if not db.listing_exists(lst):
+            db.save_listing(lst, u_of_t_address)
+            print('** New listing saved **')
+        else:
+            print('already saved')
 
     page_number += 1
