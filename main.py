@@ -6,7 +6,7 @@ from util.database import Database
 from util.gmail import Gmail
 
 config = {
-    'max_price': "2200",
+    'max_price': "3000",
     'address': 'M5S+1A1',
     'long_lat': '43.660917,-79.396091',
     'distance': '10.0'
@@ -23,7 +23,7 @@ mail = Gmail()
 
 while (True):
     page_number = 1
-    for page_number in range(1, 3):
+    for page_number in range(1, 6):
         page_text = 'page-' + str(page_number) + "/" if page_number != 1 else ""
 
         URL = "http://www.kijiji.ca/b-2-bedroom-apartments-condos/city-of-toronto/" + page_text + \
@@ -55,8 +55,8 @@ while (True):
             print("     " + str(lst.get_cost()))
             if not db.listing_exists(lst):
                 db.save_listing(lst, u_of_t_address)
-                if lst.get_viability(u_of_t_address) <= 150 and 'Wanted: ' not in lst.get_title():
-                    mail.notify(lst, ["stefan.stancu15@gmail.com"], u_of_t_address)
+                if lst.get_viability(u_of_t_address) <= 200 and 'Wanted: ' not in lst.get_title():
+                    mail.notify(lst, ["stefan.stancu15@gmail.com", "rhealchan98@gmail.com"], u_of_t_address)
                 print('** New listing saved **')
             else:
                 print('already saved')
