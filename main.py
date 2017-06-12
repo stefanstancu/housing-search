@@ -23,40 +23,40 @@ mail = Gmail()
 
 while (True):
     page_number = 1
-    # for page_number in range(1, 10):
-    page_text = 'page-' + str(page_number) + "/" if page_number != 1 else ""
+    for page_number in range(1, 3):
+        page_text = 'page-' + str(page_number) + "/" if page_number != 1 else ""
 
-    URL = "http://www.kijiji.ca/b-2-bedroom-apartments-condos/city-of-toronto/" + page_text + \
-          "c214l1700273r" + config['distance'] + "?price=__" + config['max_price'] + "&address=" + config[
-              'address'] + "&ll=" + \
-          config['long_lat']
+        URL = "http://www.kijiji.ca/b-2-bedroom-apartments-condos/city-of-toronto/" + page_text + \
+              "c214l1700273r" + config['distance'] + "?price=__" + config['max_price'] + "&address=" + config[
+                  'address'] + "&ll=" + \
+              config['long_lat']
 
-    page = requests.get(URL)
-    # Break condition to start back at page 1
-    if page == last_page:
-        break
-    else:
-        print('PAGE ' + str(page_number) + '============================================')
-        last_page = page
-
-    tree = html.fromstring(page.content)
-
-    for i in range(0, 100):
-        x_pth = post_name_xpth_prefix + str(i) + post_name_xpth_suffix
-        name = tree.xpath(x_pth)
-
-        # If this element does not exist, continue
-        if len(name) == 0:
-            continue
-
-        lst = Listing(base_url + name[0].attrib['href'])
-
-        print(lst.get_title())
-        print("     " + str(lst.get_cost()))
-        if not db.listing_exists(lst):
-            db.save_listing(lst, u_of_t_address)
-            if lst.get_viability(u_of_t_address) <= 150:
-                mail.notify(lst, ["stefan.stancu15@gmail.com"], u_of_t_address)
-            print('** New listing saved **')
+        page = requests.get(URL)
+        # Break condition to start back at page 1
+        if page == last_page:
+            break
         else:
-            print('already saved')
+            print('PAGE ' + str(page_number) + '============================================')
+            last_page = page
+
+        tree = html.fromstring(page.content)
+
+        for i in range(0, 100):
+            x_pth = post_name_xpth_prefix + str(i) + post_name_xpth_suffix
+            name = tree.xpath(x_pth)
+
+            # If this element does not exist, continue
+            if len(name) == 0:
+                continue
+
+            lst = Listing(base_url + name[0].attrib['href'])
+
+            print(lst.get_title())
+            print("     " + str(lst.get_cost()))
+            if not db.listing_exists(lst):
+                db.save_listing(lst, u_of_t_address)
+                if lst.get_viability(u_of_t_address) <= 150 and 'Wanted: ' not in lst.get_title():
+                    mail.notify(lst, ["stefan.stancu15@gmail.com"], u_of_t_address)
+                print('** New listing saved **')
+            else:
+                print('already saved')
