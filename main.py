@@ -7,12 +7,12 @@ from util.database import Database
 config = {
     'max_price': "2200",
     'address': 'M5S+1A1',
-    'long_lat': '43.660917,-79.396091'
+    'long_lat': '43.660917,-79.396091',
+    'distance': '10.0'
 }
 u_of_t_address = "40 St George St, Toronto, ON M5S 2E4"
 post_name_xpth_prefix = '//*[@id="MainContainer"]/div[4]/div[3]/div/div['
 post_name_xpth_suffix = ']/div/div[2]/div/div[2]/a'
-page_number = 1
 last_page = None
 
 base_url = 'http://www.kijiji.ca'
@@ -20,11 +20,13 @@ base_url = 'http://www.kijiji.ca'
 db = Database()
 
 while (True):
-
+    page_number = 1
+    # for page_number in range(1, 10):
     page_text = 'page-' + str(page_number) + "/" if page_number != 1 else ""
 
     URL = "http://www.kijiji.ca/b-2-bedroom-apartments-condos/city-of-toronto/" + page_text + \
-          "c214l1700273r5.0?price=__" + config['max_price'] + "&address=" + config['address'] + "&ll=" + \
+          "c214l1700273r" + config['distance'] + "?price=__" + config['max_price'] + "&address=" + config[
+              'address'] + "&ll=" + \
           config['long_lat']
 
     page = requests.get(URL)
@@ -41,7 +43,7 @@ while (True):
         x_pth = post_name_xpth_prefix + str(i) + post_name_xpth_suffix
         name = tree.xpath(x_pth)
 
-        # If this element does not exist, it will return an empty array
+        # If this element does not exist, continue
         if len(name) == 0:
             continue
 
@@ -54,5 +56,3 @@ while (True):
             print('** New listing saved **')
         else:
             print('already saved')
-
-    page_number += 1
