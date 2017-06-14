@@ -52,11 +52,14 @@ while (True):
             lst = Listing(base_url + name[0].attrib['href'])
 
             print(lst.get_title())
-            print("     " + str(lst.get_cost()))
-            if not db.listing_exists(lst):
-                db.save_listing(lst, u_of_t_address)
-                if lst.get_viability(u_of_t_address) <= 200 and 'Wanted: ' not in lst.get_title():
-                    mail.notify(lst, ["stefan.stancu15@gmail.com", "rhealchan98@gmail.com"], u_of_t_address)
-                print('** New listing saved **')
+            if lst.get_title() != 'poor_err':
+                if not db.listing_exists(lst):
+                    db.save_listing(lst, u_of_t_address)
+                    if lst.get_viability(u_of_t_address) <= 200 and 'Wanted: ' not in lst.get_title():
+                        mail.notify(lst, ["stefan.stancu15@gmail.com", "rhealchan98@gmail.com"], u_of_t_address)
+                    print('** New listing saved **')
+                else:
+                    print('already saved')
+
             else:
-                print('already saved')
+                mail.email_dev(lst.url + "\n broke at \n" + URL)

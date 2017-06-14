@@ -35,3 +35,30 @@ class Gmail:
         server.login(self.credentials['username'], self.credentials['password'])
         server.sendmail(self.credentials['username'], recipients, msg)
         server.quit()
+
+    def email_dev(self, message, recipients):
+        """
+            Basic call to send an email with a defined message
+        Args:
+            message: (string) The message
+            recipients: (list) strings containing the recipients
+
+        Returns:
+            None
+
+        """
+        # TODO: should notify of success or failure
+
+        msg = "\r\n".join([
+            "From: " + self.credentials['username'],
+            "To: " + '\,'.join(recipients),
+            "Subject: DEV email",
+            "",
+            message
+        ])
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(self.credentials['username'], self.credentials['password'])
+        server.sendmail(self.credentials['username'], recipients, msg)
+        server.quit()

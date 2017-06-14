@@ -78,7 +78,13 @@ class Listing:
         try:
             self.title
         except AttributeError:
-            self.title = self.tree.xpath(title_xpath)[0].text
+            try:
+                self.title = self.tree.xpath(title_xpath)[0].text
+            except IndexError:
+                print('This site broke it:')
+                print(self.url)
+                self.title = 'poor_err'
+
 
         return self.title
 
