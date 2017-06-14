@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import Column, String, Integer, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
@@ -22,7 +23,8 @@ class DBListing(Base):
 class Database:
     def __init__(self):
         # Connect to the db
-        db_url = get_db_url('credentials/db_credentials.json')
+        pth = os.path.join(os.path.dirname(__file__), '../credentials/db_credentials.json')
+        db_url = get_db_url(pth)
         engine = create_engine(db_url)
         session = sessionmaker()
         session.configure(bind=engine)
