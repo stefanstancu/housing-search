@@ -62,4 +62,4 @@ while (True):
                     print('already saved')
 
             else:
-                mail.email_dev(lst.url + "\n broke at \n" + URL)
+                mail.email_dev(lst.url + "\n broke at \n" + URL, ["stefan.stancu15@gmail.com"])
