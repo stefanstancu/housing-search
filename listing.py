@@ -28,7 +28,7 @@ class Listing:
         self.tree = html.fromstring(self.page.content)
         self.url = url
 
-        self.db_url = util.get_db_url('credentials/db_credentials.json')
+        # self.db_url = util.get_db_url('credentials/db_credentials.json')
 
     def get_cost(self):
         """

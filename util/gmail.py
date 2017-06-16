@@ -1,3 +1,4 @@
+import os
 import smtplib
 import json
 
@@ -5,7 +6,8 @@ import json
 class Gmail:
     def __init__(self):
         # Load email credentials
-        self.credentials = json.load(open('credentials/email_credentials.json'))
+        pth = os.path.join(os.path.dirname(__file__), '../credentials/email_credentials.json')
+        self.credentials = json.load(open(pth))
 
     def notify(self, listing, recipients, u_of_t_address):
         """
