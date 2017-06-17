@@ -49,7 +49,10 @@ while (True):
             if len(name) == 0:
                 continue
 
-            lst = Listing(base_url + name[0].attrib['href'])
+            try:
+                lst = Listing(base_url + name[0].attrib['href'])
+            except AttributeError as ae:
+                continue
 
             print(lst.get_title())
             if lst.get_title() != 'poor_err':
