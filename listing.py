@@ -20,7 +20,7 @@ address_xpaths = [
 ]
 
 title_xpath = '//*[@id="MainContainer"]/div[4]/div[3]/span/h1'
-
+error_message_xpath = '//*[@id="MainContainer"]/div[3]/h1'
 
 class Listing:
     def __init__(self, url):
@@ -28,6 +28,9 @@ class Listing:
         self.tree = html.fromstring(self.page.content)
         self.url = url
 
+        # If the listing no longer exists, throw an exception
+        if len(self.tree.xpath(error_message_xpath)) != 0:
+            raise NameError
         # self.db_url = util.get_db_url('credentials/db_credentials.json')
 
     def get_cost(self):
